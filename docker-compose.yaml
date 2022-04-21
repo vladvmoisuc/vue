@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  auth-microfrontend:
+    build: ./auth-microfrontend
+    volumes:
+      - ./auth-microfrontend:/auth-microfrontend
+    environment:
+      - VUE_APP_API_URL=http://localhost:3000/api
+    ports:
+      - "8080:8080"
+  auth-service:
+    build: ./auth-service
+    volumes:
+      - ./auth-service:/auth-service
+    environment:
+      - DATABASE_URL=mongodb://mongodb:27017
+      - REDIS_URL=redis://redis:6379
+      - SMTP_HOST=smtp.mailtrap.io
+      - SMTP_USER=56444f2f52a6da
+      - SMTP_PASSWORD=c1e41508810709
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+      # - mongodb
+    restart: always
+  redis:
+    image: "redis:latest"
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
